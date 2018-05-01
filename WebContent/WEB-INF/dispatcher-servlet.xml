@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+<!--  user Class instance reate -->
+<bean name = "/hello.do" class="kr.edu.kosta.HelloController"/>
+<bean name = "/list.do" class="kr.kosta.controller.ListController">
+	<property name="guestBookDAO" ref="guestDAO"/>
+</bean>
+<bean name="/writeform.do" class="kr.kosta.controller.WriteFormController"/>
+<bean name="/write.do" class="kr.kosta.controller.WriteController">
+	<property name="guestBookDAO" ref="guestDAO"/>
+</bean>
+<bean name="/deleteform.do" class="kr.kosta.controller.DeleteFormController"/>
+<bean name="/delete.do" class = "kr.kosta.controller.DeleteController">
+	<property name="guestBookDAO" ref="guestDAO"/>
+</bean>
+
+<!-- JDBC 설정 정보, db 연결하기 -->
+<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<property name="driverClassName" value="oracle.jdbc.OracleDriver"/>
+	<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+	<property name="username" value="kwanyong"/>
+	<property name="password" value="oracle"/>
+</bean>
+
+<!-- JdbcTemplate 사용 : dataSource 의존관계, DML 명령 처리 -->
+<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+	<property name="dataSource" ref="dataSource"/>
+</bean>
+
+<!-- JdbcTemplate를 누가 사용할 것인지에 대한 설정 : 사용자가 생성한 DAO 객체 ref -->
+<!-- DAO 객체 생성 -->
+<bean id="guestDAO" class="kr.kosta.model.GusetBookDAOImpl">
+	<property name="jdbcTemplate" ref="jdbcTemplate"/>
+</bean>
+
+<!-- viewResolver -->
+<bean id = "viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<property name = "viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+	<property name = "prefix" value="/WEB-INF/views/" /> <!-- 접두사 -->
+	<property name = "suffix" value=".jsp"/>
+</bean>
+
+</beans>
